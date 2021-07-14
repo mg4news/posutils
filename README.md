@@ -30,6 +30,14 @@ url = https://github.com/mg4news/posutils.git
 revision=c804ee063f5c8b215b2037ca80f4a879a2dbd0f5
 ```
 
+in the top level meson.build file add:
+
+```
+# Pull in posutils using the Wrap DB system
+posutils_proj = subproject('posutils')
+posutils_dep = posutils_proj.get_variable('posutils_dep')
+```
+
 ### To use in a CMake project
 Add the following to your top level CMakeLists.txt file:
 
