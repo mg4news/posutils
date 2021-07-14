@@ -5,7 +5,7 @@ this is a simple utility library that:
 - provides a simple and accurate timer mechansim leveraging threads, conditional variables and callbacks
 
 ## Current Release/Version
-1.0.1
+1.0.2
 
 ## Why even do this?
 Someone recently said to me "why not just use the C++ std::threads stuff, and even if you don't, why not make this look like the C++ std::threads stuff?". So, here is why..

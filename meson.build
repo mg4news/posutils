@@ -26,11 +26,11 @@
 # ==========================================================================================================
 
 project('posutils', 'cpp',
-    version : '1.0.1',
+    version : '1.0.2',
     default_options : ['cpp_std=c++11', 'warning_level=1'])
 
 # global defines
-add_global_arguments('-DLOG_TO_STDOUT', language : 'cpp')
+add_project_arguments('-DLOG_TO_STDOUT', language : 'cpp')
 
 # build and link options
 # -Wall already handled by ''warning_level=1''
