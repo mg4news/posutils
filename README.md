@@ -21,22 +21,24 @@ If you are a C++ fan boy/girl you could definitely wrap this in a std-like class
 
 ### To use in a Meson project
 Create a wrap file in the "subprojects" directory. Use the commit hash corresponding to release 1.0.2:
-``
+
+```
 [wrap-git]
 directory = posutils
 url = https://github.com/mg4news/posutils.git
 # uses the commit tag corresponding to version 1.0.2
 revision=c804ee063f5c8b215b2037ca80f4a879a2dbd0f5
-``
+```
 
 ### To use in a CMake project
 Add the following to your top level CMakeLists.txt file:
-``
+
+```
 include(FetchContent)
 FetchContent_Declare(
   posutils
   GIT_REPOSITORY https://github.com/mg4news/posutils.git
   GIT_TAG 1.0.2
 )  
-``
+```
 
