@@ -4,9 +4,6 @@ this is a simple utility library that:
 - wraps and simplifies posix mutex creation
 - provides a simple and accurate timer mechansim leveraging threads, conditional variables and callbacks
 
-## Current Release/Version
-1.0.2
-
 ## Why even do this?
 Someone recently said to me "why not just use the C++ std::threads stuff, and even if you don't, why not make this look like the C++ std::threads stuff?". So, here is why..
 - there are still quite a few people that develop in C. It is simple to include a C API and implementation into a C++ implementation. It is not simple to include a C++ interface and implementation in a pure C project. 
@@ -19,4 +16,27 @@ If you are a C++ fan boy/girl you could definitely wrap this in a std-like class
 - both Meson and CMake are supported. For CMake the minimum version required is 2.x. There are no complex subrproject requirements
 - depends on pthreads and on GLIB 2.x
  
+## Current Release/Version
+1.0.2
+
+### To use in a Meson project
+Create a wrap file in the "subprojects" directory. Use the commit hash corresponding to release 1.0.2:
+``
+[wrap-git]
+directory = posutils
+url = https://github.com/mg4news/posutils.git
+# uses the commit tag corresponding to version 1.0.2
+revision=c804ee063f5c8b215b2037ca80f4a879a2dbd0f5
+``
+
+### To use in a CMake project
+Add the following to your top level CMakeLists.txt file:
+``
+include(FetchContent)
+FetchContent_Declare(
+  posutils
+  GIT_REPOSITORY https://github.com/mg4news/posutils.git
+  GIT_TAG 1.0.2
+)  
+``
 
