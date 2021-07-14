@@ -4,6 +4,9 @@ this is a simple utility library that:
 - wraps and simplifies posix mutex creation
 - provides a simple and accurate timer mechansim leveraging threads, conditional variables and callbacks
 
+## Current Release/Version
+1.0.1
+
 ## Why even do this?
 Someone recently said to me "why not just use the C++ std::threads stuff, and even if you don't, why not make this look like the C++ std::threads stuff?". So, here is why..
 - there are still quite a few people that develop in C. It is simple to include a C API and implementation into a C++ implementation. It is not simple to include a C++ interface and implementation in a pure C project. 
