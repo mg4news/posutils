@@ -25,8 +25,8 @@
 # For more information, please refer to <http://unlicense.org>
 # ==========================================================================================================
 
-project('libposutils', 'cpp',
-    version : '1.0.0',
+project('posutils', 'cpp',
+    version : '1.0.1',
     default_options : ['cpp_std=c++11', 'warning_level=1'])
 
 # global defines
