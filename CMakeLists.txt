@@ -25,13 +25,14 @@
 # For more information, please refer to <http://unlicense.org>
 # ==========================================================================================================
 cmake_minimum_required(VERSION 3.14)
-project("posutils" VERSION 1.0.2 LANGUAGES CXX)
+project("posutils" VERSION 1.0.3 LANGUAGES CXX)
 
 # ----------------------------------------------------------------------------------------------------------
 # Compiler and link settings
 # ----------------------------------------------------------------------------------------------------------
 add_compile_options(
-  #-Werror=shadow  Renable once RCPis fixed..
+  -fPIC
+  -Werror=shadow  
   -Werror=undef
   -Werror=uninitialized
   -Werror=cast-align
