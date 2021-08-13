@@ -25,6 +25,8 @@
 
 /**** Includes ***************************************************************/
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 #include <malloc.h>
 #include <assert.h>
@@ -35,10 +37,8 @@
 #include <sys/types.h>
 #include <sched.h>
 #include <limits.h>
-#include <glib.h>
-#if !defined(__USE_GNU)
-    #define  __USE_GNU
-#endif /* !defined(__USE_GNU) */
+#include <atomic>
+
 #include "posutils.h"
 #include "logging.h"
 
@@ -65,7 +65,7 @@ typedef struct pu_thread_context_tag
 /**** Macros ****************************************************************/
 
 /**** Static declarations ***************************************************/
-static int                  iIsInit      = 0;
+static std::atomic<int>     iIsInit{ 0 };
 static pthread_mutex_t      mtxLock;
 static size_t               uiPageSize   = 0;
 static size_t               uiThreadCount = 0;
@@ -78,6 +78,19 @@ static void                 pu_thread_exit_handler( void* pArg );
 /****************************************************************************/
 /* LOCAL FUNCTION DEFINITIONS                                               */
 /****************************************************************************/
+static inline bool pu_thread_first_init( void ) {
+    int iExpectedVal = 0;
+    int iDesiredVal  = 1;
+    return (iIsInit.compare_exchange_strong(iExpectedVal, iDesiredVal));
+}
+// pu_thread_first_init
+
+static inline bool pu_thread_first_exit( void ) {
+    int iExpectedVal = 1;
+    int iDesiredVal  = 0;
+    return (iIsInit.compare_exchange_strong(iExpectedVal, iDesiredVal));
+}
+// pu_thread_first_exit
 
 static inline size_t pu_thread_stacksize_fix( size_t uiStackSize )
 {
@@ -303,7 +316,9 @@ int pu_thread_init( void ) {
     intptr_t iPageSize;
 
     // Atomic compare and exchange makes the init thread safe and idempotent
-    if (g_atomic_int_compare_and_exchange( &iIsInit, 0, 1)) {
+    PUTHREAD_DEBUG("PU_THREAD(init)\n");
+    if (pu_thread_first_init()) {
+        PUTHREAD_DEBUG("PU_THREAD(init): first idempotent init\n");
 
         // Check the page size
         if (uiPageSize == 0) {
@@ -319,10 +334,10 @@ int pu_thread_init( void ) {
             }
         }
 
-        // error?
+        // error? Uninit..
         if ((0 != iResult) || (uiPageSize < 1024)) {
             uiPageSize = 0;
-            iIsInit = 0;
+            pu_thread_first_exit();
             iResult = -1;
         }
     }
@@ -348,7 +363,10 @@ int pu_thread_init( void ) {
  * This is an idempotent call, it can be invoked multiple times. Only the first invocation will take effect
  */
 int pu_thread_exit( void ) {
-    if (g_atomic_int_compare_and_exchange( &iIsInit, 1, 0)) {
+    PUTHREAD_DEBUG("PU_THREAD(exit)\n");
+    if (pu_thread_first_exit()) {
+        PUTHREAD_DEBUG("PU_THREAD(exit): first idempotent exit\n");
+
         // In debug mode warn if there are threads outstanding
         // not much to do in NDEBUG. Better hope like hell the process cleans up after you!!!
         WARN( uiThreadCount == 0 );

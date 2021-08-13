@@ -27,7 +27,9 @@
 /**** Includes ***************************************************************/
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "posutils.h"
+#include "logging.h"
 
 /**** Definitions ************************************************************/
 

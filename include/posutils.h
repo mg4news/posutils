@@ -53,14 +53,8 @@ extern "C" {
  */
 
 /**** Includes ***************************************************************/
-#if !defined(_GNU_SOURCE)
-    #define _GNU_SOURCE
-#endif /* !defined(_GNU_SOURCE) */
 #include <pthread.h>
 #include <errno.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include "logging.h"
 #include "putimer.h"
 
 /**** Definitions ************************************************************/

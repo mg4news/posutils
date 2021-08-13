@@ -26,6 +26,7 @@
 /**** Includes ***************************************************************/
 #include <pthread.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 #include "putimer.h"
 #include "posutils.h"

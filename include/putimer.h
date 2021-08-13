@@ -56,8 +56,6 @@ extern "C" {
 
 /**** Includes ***************************************************************/
 #include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
 #include <time.h>
 
 /**** Definitions ************************************************************/
@@ -502,32 +500,6 @@ void timespec_realtime_to_monotonic( struct timespec* pTs );
  *
  * @{
  */
-
-/**
- * @brief Converts PTS/DTS to ms
- * @param[out] pts_64bit_ : PTS/DTS value, of type uint64_t.
- * @param[in]  ms_32_bit_ : Millisecond value, of type uint32_t.
- *
- * @par Description
- * converts 90kHz time units to milliseconds. It avoids 64 bit integer mathematics.
- */
-#define TIME_90KHZ_TO_MS(pts_64bit_,ms_32_bit_) { \
-    ms_32_bit_ = (uint32_t)(pts_64bit_ >> 1);     \
-    ms_32_bit_ /= (uint32_t)45;                   \
-}
-
-/**
- * @brief Converts ms to PTS/DTS
- * @param[in]  pts_64bit_ : PTS/DTS value, of type uint64_t.
- * @param[out] ms_32_bit_ : Millisecond value, of type uint32_t.
- *
- * @par Description
- * converts milliseconds to 90kHz time units. It avoids 64 bit integer mathematics.
- */
-#define TIME_MS_TO_90KHZ(pts_64bit_,ms_32_bit_) {         \
-    pts_64bit_ = (uint64_t)(ms_32_bit_ * (uint32_t)45);   \
-    pts_64bit_ <<= 1;                                     \
-}
 
 /**
  * @}

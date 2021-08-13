@@ -25,7 +25,7 @@
 # For more information, please refer to <http://unlicense.org>
 # ==========================================================================================================
 cmake_minimum_required(VERSION 3.14)
-project("posutils" VERSION 1.0.3 LANGUAGES CXX)
+project("posutils" VERSION 1.0.4 LANGUAGES CXX)
 
 # ----------------------------------------------------------------------------------------------------------
 # Compiler and link settings
@@ -84,7 +84,6 @@ set(CXX_EXTENSIONS NO)
 # External dependencies. Most pulled using pkg-config
 # ----------------------------------------------------------------------------------------------------------
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(glib2 REQUIRED glib-2.0)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -102,9 +101,12 @@ set(POSUTILS_SRC
 
 add_library(posutils STATIC ${POSUTILS_SRC})
 target_include_directories(posutils 
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} 
-  PRIVATE ${glib2_INCLUDE_DIRS})
-target_link_libraries(posutils PRIVATE Threads::Threads ${glib2_LIBRARY_DIRS})
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}) 
+target_link_libraries(posutils PRIVATE Threads::Threads)
+
+# Uncomment this to buils a simple test program
+# Not on by default
+#add_subdirectory(tests)
 
 
 
