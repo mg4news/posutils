@@ -33,7 +33,6 @@
 #include "logging.h"
 
 /**** Definitions ************************************************************/
-#undef PUTIMER_DEBUGGING
 #if defined (PUTIMER_DEBUGGING)
     #define PUTIMER_DEBUG LOG_TRACE
 #else

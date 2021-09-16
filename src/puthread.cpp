@@ -43,7 +43,6 @@
 #include "logging.h"
 
 /**** Definitions ************************************************************/
-#undef PUTHREAD_DEBUGGING
 #if defined (PUTHREAD_DEBUGGING)
     #define PUTHREAD_DEBUG LOG_TRACE
 #else
@@ -59,6 +58,11 @@ typedef struct pu_thread_context_tag
     pid_t           tid;                     /* Linux thread ID                    */
     const char*     szName;                  /* Thread name                        */
 }   pu_thread_context_t;
+
+#if defined(PUTHREAD_DEBUGGING)
+    #include <vector>
+    static std::vector <pu_thread_context_t*> vecCtxt;
+#endif // defined(PUTHREAD_DEBUGGING)
 
 #define PU_THREAD_STUPID_STACKSIZE (1024*1024)
 
@@ -151,6 +155,17 @@ static void pu_thread_exit_handler( void* pArg )
     pu_thread_context_t* pNode = (pu_thread_context_t*)pArg;
     ASSERT( pNode );
     pthread_mutex_lock( &mtxLock );
+    PUTHREAD_DEBUG( "PU_THREAD(exit_handler): thrd=%s\n", pNode->szName );
+#if defined(PUTHREAD_DEBUGGING)
+    for (auto it = vecCtxt.begin(); it != vecCtxt.end(); ) {
+        if (*it == pNode) {
+            vecCtxt.erase(it);
+            break;
+        } else {
+            ++it;
+        }
+    }
+#endif // defined(PUTHREAD_DEBUGGING)
     free( pNode );
     pNode = NULL;
     ASSERT(uiThreadCount > 0);
@@ -279,6 +294,9 @@ pthread_t pu_thread_create(
                         szSysName[15] = 0;
                         pthread_setname_np( iPid, szSysName );
                         uiThreadCount++;
+#if defined(PUTHREAD_DEBUGGING)
+                        vecCtxt.push_back( pNode );
+#endif // defined(PUTHREAD_DEBUGGING)
                     }
                     pthread_mutex_unlock( &mtxLock );
                 }
@@ -369,7 +387,16 @@ int pu_thread_exit( void ) {
 
         // In debug mode warn if there are threads outstanding
         // not much to do in NDEBUG. Better hope like hell the process cleans up after you!!!
+        PUTHREAD_DEBUG("PU_THREAD(exit): remaining threads = %ld\n", uiThreadCount);
         WARN( uiThreadCount == 0 );
+
+#if defined(PUTHREAD_DEBUGGING)
+        for (auto it = vecCtxt.begin(); it != vecCtxt.end(); ) {
+            PUTHREAD_DEBUG("PU_THREAD(exit): thread remnant = %s\n", (*it)->szName );
+            ++it;
+        }
+#endif // defined(PUTHREAD_DEBUGGING)
+
         pthread_mutex_destroy( &mtxLock );
         uiPageSize = 0;
     }
