@@ -167,7 +167,7 @@ static void pu_thread_exit_handler( void* pArg )
     }
 #endif // defined(PUTHREAD_DEBUGGING)
     free( pNode );
-    pNode = NULL;
+    pNode = nullptr;
     ASSERT(uiThreadCount > 0);
     uiThreadCount--;
     pthread_mutex_unlock( &mtxLock );
@@ -190,8 +190,8 @@ static void pu_thread_exit_handler( void* pArg )
  * @retval  A non-zero pthread ID indicates success
  * @retval  A zero pthread ID means failure
  *
- * @pre     The entry function (main) is non-NULL
- * @pre     The name is non-NULL
+ * @pre     The entry function (main) is non-nullptr
+ * @pre     The name is non-nullptr
  * @post    The pthread is created.
  *
  * @par Description
@@ -206,7 +206,7 @@ static void pu_thread_exit_handler( void* pArg )
  * will be invoked. This allows us to do clean up during an on-demand process shutdown.
  *
  * @par Note
- * If there is no need for an exit handler, then simply set the \c fctExit parameter to NULL.
+ * If there is no need for an exit handler, then simply set the \c fctExit parameter to nullptr.
  *
  * @par Note
  * The thread name (szName) \b MUST be persistent and null terminated.. In the code the \b pointer to the
@@ -222,7 +222,7 @@ pthread_t pu_thread_create(
 {
     pthread_attr_t       attr;
     int                  iResult = -1;
-    pu_thread_context_t* pNode = NULL;
+    pu_thread_context_t* pNode = nullptr;
     pthread_t            iPid = (pthread_t)0;
 
     // Self init if not already
@@ -261,8 +261,8 @@ pthread_t pu_thread_create(
             if (0 == iResult)
             {
                 pNode = (pu_thread_context_t*)malloc( sizeof( pu_thread_context_t ) );
-                ASSERT( NULL != pNode );
-                if (NULL != pNode)
+                ASSERT( nullptr != pNode );
+                if (nullptr != pNode)
                 {
                     memset( pNode, 0, sizeof(pu_thread_context_t) );
                     pNode->fctMain  = fctMain;

@@ -102,7 +102,7 @@ typedef struct putimer_tmr_tag
 
 /**** Static declarations ***************************************************/
 static pthread_mutex_t  mtxLock;
-static putimer_tmr_t*   pQueue      = NULL;
+static putimer_tmr_t*   pQueue      = nullptr;
 static int              iIsInit     = 0;
 static int              iKillThread = 0;
 static uint32_t         pTimerId[PUTIMER_RES_MULTIPLIER];
@@ -458,7 +458,7 @@ void* putimer_thread( void* pArg )
              */
             clock_gettime( CLOCK_MONOTONIC, &tsNow );
             for (
-                pPrev = NULL, pCurr = pQueue, uiToCall = 0;
+                pPrev = nullptr, pCurr = pQueue, uiToCall = 0;
                 (pCurr && (!timespec_is_a_after_b( &(pCurr->tsEnd), &tsNow )));
                 pCurr = pCurr->pNext)
             {
@@ -469,7 +469,7 @@ void* putimer_thread( void* pArg )
             }
             if (pPrev)
             {
-                pPrev->pNext = NULL;
+                pPrev->pNext = nullptr;
                 pQueue       = pCurr;
             }
         }
@@ -547,7 +547,7 @@ void* putimer_thread( void* pArg )
     }
 
     /* done */
-    return (NULL);
+    return (nullptr);
 }
 /* putimer_thread */
 
@@ -581,13 +581,13 @@ int putimer_remove(
     *pRemainingMs = 0;
 
     /* Check state, and immediate go to idle. This prevents the timer from calling back */
-    bInQ = (PUTIMER_STATE_WAITING == pTmr->enState) ? true : false;
+    bInQ = (PUTIMER_STATE_WAITING == pTmr->enState);
     pTmr->enState = PUTIMER_STATE_IDLE;
 
     /* Yank it from the queue */
     if (bInQ)
     {
-        pPrev = NULL;
+        pPrev = nullptr;
         pCurr = pQueue;
         while (pCurr)
         {
@@ -658,7 +658,7 @@ int putimer_add( putimer_tmr_t* pTmr )
     /* check state */
     if (PUTIMER_STATE_IDLE == pTmr->enState)
     {
-        pPrev = NULL;
+        pPrev = nullptr;
         pCurr = pQueue;
 
         /* set the end tick - if we are NOT using absolute time */
@@ -718,7 +718,7 @@ putimer_hnd_t putimer_create_local(
 {
     putimer_tmr_t* pTmr;
     uint16_t       usID;
-    putimer_hnd_t  hndTmr = (putimer_hnd_t)0;
+    putimer_hnd_t  hndTmr{};
 
     WARN( iIsInit );
     ASSERT( fctCallback );
@@ -759,7 +759,7 @@ putimer_hnd_t putimer_create_local(
             pTmr->uiPeriodMs  = uiPeriodMs;
             pTmr->enState     = PUTIMER_STATE_IDLE;
             pTmr->iUseAbsTime = 0;
-            pTmr->pNext       = NULL;
+            pTmr->pNext       = nullptr;
             pTmr->bLockable   = bLockable;
             uiAllocatedTimers++;
 
@@ -836,7 +836,7 @@ int putimer_init( void )
         {
             pidTmrThread = PU_THREAD_CREATE(
                 putimer_thread,
-                NULL,
+                nullptr,
                 (16*1024) );
             ASSERT( pidTmrThread );
             iResult = ((0 == pidTmrThread) ? -1 : 0);
@@ -869,7 +869,7 @@ int putimer_exit( void )
         pthread_cond_signal( &cndWake );
 
         /* wait for thread to exit, then kill all timer resources */
-        pthread_join( pidTmrThread, NULL );
+        pthread_join( pidTmrThread, nullptr );
         PU_MUTEX_LOCK_ERROR( &mtxLock );
         memset( pTimerId, 0, PUTIMER_RES_MULTIPLIER * sizeof(uint32_t) );
         memset( pTimerList, 0, PUTIMER_MAX_RESOURCES * sizeof(putimer_tmr_t) );
@@ -893,7 +893,7 @@ int putimer_exit( void )
  * @param   fctCallback :function to call on expiration
  * @param   uiPeriodMs  :timeout period in ms
  * @param   pCookie     :optional user data
- * @retval  non-NULL    : Valid handle
+ * @retval  non-nullptr    : Valid handle
  * @retval  nullptr     : Failure
  *
  * @pre     Module is initialised
@@ -921,8 +921,8 @@ putimer_hnd_t putimer_create(
  * @param   fctCallback :function to call on expiration
  * @param   uiPeriodMs  :timeout period in ms
  * @param   pCookie     :optional user data
- * @retval  non-NULL    : Valid handle
- * @retval  NULL        : Failure
+ * @retval  non-nullptr    : Valid handle
+ * @retval  nullptr        : Failure
  *
  * @pre     Module is initialised
  * @pre     timeout is >= PUTIMER_MIN_TIMEOUT
@@ -1259,7 +1259,7 @@ int putimer_is_active(
         usTag = PUTIMER_HND_GET_TAG( hndTimer );
         if (usTag == pTimerList[usIdx].usTag)
         {
-            *pActive = (PUTIMER_STATE_IDLE == pTimerList[usIdx].enState) ? false : true;
+            *pActive = (PUTIMER_STATE_IDLE != pTimerList[usIdx].enState);
             iRet = 0;
         }
 #if !defined(NDEBUG)

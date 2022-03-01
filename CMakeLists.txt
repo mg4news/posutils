@@ -25,13 +25,48 @@
 # For more information, please refer to <http://unlicense.org>
 # ==========================================================================================================
 cmake_minimum_required(VERSION 3.14)
-project("posutils" VERSION 1.0.4 LANGUAGES CXX)
+project("posutils" VERSION 1.0.6 LANGUAGES CXX)
+
+# ----------------------------------------------------------------------------------------------------------
+# External dependencies
+# ----------------------------------------------------------------------------------------------------------
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+# ----------------------------------------------------------------------------------------------------------
+# Build the library
+# Anyone that links the library automatically gets the posutils includes
+# ----------------------------------------------------------------------------------------------------------
+set(POSUTILS_SRC
+  src/pumutex.cpp
+  src/puthread.cpp
+  src/putimer.cpp
+)
+
+add_library(${PROJECT_NAME} STATIC ${POSUTILS_SRC})
+
+target_include_directories(${PROJECT_NAME}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} 
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+) 
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+
+set_target_properties(${PROJECT_NAME}  PROPERTIES
+  CXX_STANDARD 11
+  CXX_STANDARD_REQUIRED YES
+  CXX_EXTENSIONS NO
+  POSITION_INDEPENDENT_CODE ON
+)
+
+target_link_options(${PROJECT_NAME} PUBLIC
+  -Wl,-z,nodelete
+)  
 
 # ----------------------------------------------------------------------------------------------------------
 # Compiler and link settings
 # ----------------------------------------------------------------------------------------------------------
-add_compile_options(
-  -fPIC
+target_compile_options(${PROJECT_NAME} PRIVATE
   -Werror=shadow  
   -Werror=undef
   -Werror=uninitialized
@@ -43,10 +78,6 @@ add_compile_options(
   -Werror=unreachable-code 
   -Werror=parentheses
   -Werror=switch
-  -Werror=unused-function
-  -Werror=duplicated-branches
-  -Werror=implicit-fallthrough
-  -Werror=misleading-indentation
   -Werror=unused-function
   -Werror=unused
   -Werror=extra
@@ -68,49 +99,19 @@ add_compile_options(
   -Wsign-promo
   -Wstrict-null-sentinel
 
+  # Options added in GCC 6 and 7.1 
+  $<$<COMPILE_LANG_AND_ID:CXX,GNU>:
+      $<$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,7.1.0>:
+          -Wduplicated-branches
+          -Wimplicit-fallthrough
+          -Wmisleading-indentation
+      >
+  >
+
   $<$<CONFIG:Debug>:>
   $<$<CONFIG:Release>:>
 )
 
-add_link_options(
-  -Wl,-z,nodelete
-)  
-
-set(CXX_STANDARD 11)
-set(CXX_STANDARD_REQUIRED YES)
-set(CXX_EXTENSIONS NO)
-
-# ----------------------------------------------------------------------------------------------------------
-# External dependencies. Most pulled using pkg-config
-# ----------------------------------------------------------------------------------------------------------
-find_package(PkgConfig REQUIRED)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-
-# ----------------------------------------------------------------------------------------------------------
-# Build the library
-# Anyone that links the library automatocally gets the posutils includes
-# ----------------------------------------------------------------------------------------------------------
-include_directories(include)
-
-set(POSUTILS_SRC
-  src/pumutex.cpp
-  src/puthread.cpp
-  src/putimer.cpp
-)
-
-add_library(posutils STATIC ${POSUTILS_SRC})
-target_include_directories(posutils 
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}) 
-target_link_libraries(posutils PRIVATE Threads::Threads)
-
-# Uncomment this to buils a simple test program
+# Uncomment this to build a simple test program
 # Not on by default
 #add_subdirectory(tests)
-
-
-
-
-
-
-
