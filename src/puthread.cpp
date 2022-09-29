@@ -101,9 +101,9 @@ static inline size_t pu_thread_stacksize_fix( size_t uiStackSize )
     size_t uiNewSize = uiStackSize;
 
     /* Less than the PTHREAD minimum, set size to the minimum + a guard page */
-    if (uiNewSize < PTHREAD_STACK_MIN)
+    if (uiNewSize < (size_t)PTHREAD_STACK_MIN)
     {
-        uiNewSize = (PTHREAD_STACK_MIN + uiPageSize);
+        uiNewSize = ((size_t)PTHREAD_STACK_MIN + uiPageSize);
     }
 
     /* Greater than or equal to the PTHREAD minimum
